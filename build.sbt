@@ -4,18 +4,18 @@ version := "1.0"
 
 scalaVersion := "2.11.8"
 
-libraryDependencies += "io.spray" %%  "spray-json" % "1.3.2"
-
-//libraryDependencies += "io.spray" %%  "spray-json" % "1.3.2"
-
-// https://mvnrepository.com/artifact/com.typesafe.akka/akka-actor_2.11
-
 libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.4.14"
 
-// https://mvnrepository.com/artifact/com.typesafe.akka/akka-http_2.11
 libraryDependencies += "com.typesafe.akka" %% "akka-http" % "10.0.0"
 
-libraryDependencies += "io.argonaut" %% "argonaut" % "6.1"
+libraryDependencies += "com.microsoft.sqlserver" % "mssql-jdbc" % "6.1.0.jre8"
+
+libraryDependencies ++= Seq(
+  "org.scalikejdbc" %% "scalikejdbc"        % "2.5.+",
+  "com.h2database"  %  "h2"                 % "1.4.+",
+  "ch.qos.logback"  %  "logback-classic"    % "1.1.+"
+)
+
 
 
 val circeVersion = "0.6.1"
