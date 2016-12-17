@@ -9,17 +9,9 @@ import akka.util.ByteString
 import dk.kaab.flightaware.{AreaConfig, FlightConfig}
 import dk.kaab.flightaware.datatypes.SearchResult
 
-/**
-  * Created with IntelliJ IDEA.
-  * User: kasperf
-  * Date: 12/16/16
-  * Time: 9:02 PM
-  */
 case class Query(area: AreaConfig)
 
 class JsonQuery extends Actor with ActorLogging {
-  //http://flightxml.flightaware.com/json/FlightXML2/Search?query=-latlong%20{11.348%20-66.990%2017.576%20-75.024}
-  //http://flightxml.flightaware.com/json/FlightXML2/SearchCount?query=-latlong%20{11.348%20-66.990%2017.576%20-75.024}
 
   import akka.pattern.pipe
   import context.dispatcher

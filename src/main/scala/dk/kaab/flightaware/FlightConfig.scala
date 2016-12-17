@@ -8,12 +8,6 @@ import com.typesafe.config.{Config, ConfigFactory}
 import scala.collection.JavaConversions._
 import scala.collection.mutable
 
-/**
-  * Created with IntelliJ IDEA.
-  * User: kasperf
-  * Date: 12/16/16
-  * Time: 10:18 PM
-  */
 object FlightConfig {
   private val conf = ConfigFactory.load()
   private val flightConf = conf.getConfig("flightaware")

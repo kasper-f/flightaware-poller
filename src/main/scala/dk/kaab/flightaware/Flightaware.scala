@@ -7,26 +7,29 @@ import dk.kaab.flightaware.query.{JsonQuery, Query}
 import scala.concurrent.duration._
 
 /**
-  * Created with IntelliJ IDEA.
-  * User: kasperf
-  * Date: 12/16/16
-  * Time: 5:31 PM
+  * Application that will start up
   */
 object Flightaware extends App {
   val system = ActorSystem("flightaware")
-  FlightConfig.areas.foreach(c => {
-    system.actorOf(Props(classOf[FlightawareActor],c))
+  FlightConfig.areas.zipWithIndex.foreach(c => {
+    system.actorOf(Props(classOf[FlightawareActor],c._2, c._1))
   }
   )
 }
 
 
-class FlightawareActor(area: AreaConfig) extends Actor with ActorLogging {
+/**
+  * Actor that manage a single area.
+  * Delegates polling and data storage to a sub actor
+  * @param index area index used to spred the polling
+  * @param area configuration for the area
+  */
+class FlightawareActor(index:Int, area: AreaConfig) extends Actor with ActorLogging {
 
   implicit val exe = context.dispatcher
   private val queryActor = context.actorOf(Props[JsonQuery])
   private val store = context.actorOf(Props[SqlStore])
-  context.system.scheduler.schedule(3.seconds, 30.seconds, queryActor, Query(area))
+  context.system.scheduler.schedule(index.seconds, 30.seconds, queryActor, Query(area))
 
   override def receive: Receive = {
     case Some(SearchResult(off, air)) =>
@@ -34,6 +37,5 @@ class FlightawareActor(area: AreaConfig) extends Actor with ActorLogging {
       store ! air
     case x =>
       log.info(s"result from flightaware ????, ${x.toString}")
-    //TODO send result to db
   }
 }

@@ -3,16 +3,9 @@ package dk.kaab.flightaware.datatypes
 import io.circe._, io.circe.generic.auto._, io.circe.parser._, io.circe.syntax._
 
 /**
-  * Created with IntelliJ IDEA.
-  * User: kasperf
-  * Date: 12/16/16
-  * Time: 5:48 PM
+  * Matches result from a search
   */
 object FlightSample{
-//  implicit val format = spray.json.DefaultJsonProtocol.jsonFormat[String,String,String,String,String,String,String,String,
-//    Long,Long,Long,Long,Float,Float,Float,Float,Float,Float,Int,Int,Int,String,String,String,String](
-//    FlightSample.apply,"","","",""
-//  )
 
   def toJson(g:FlightSample) = g.asJson.noSpaces
 }
