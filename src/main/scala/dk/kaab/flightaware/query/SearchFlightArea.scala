@@ -9,6 +9,7 @@ import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.stream.{ActorMaterializer, ActorMaterializerSettings, Materializer}
 import dk.kaab.flightaware.datatypes._
 import dk.kaab.flightaware.{AreaConfig, FlightConfig}
+import org.slf4j.LoggerFactory
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -26,7 +27,7 @@ class SearchFlightArea extends Actor with ActorLogging {
 
   def receive = {
     case Query(config) =>
-      http.singleRequest(HttpRequest(
+        http.singleRequest(HttpRequest(
         uri = searchUrl.replace("AREA", config.areaUrlEncoded),
         headers = List(FlightConfig.authorization)))
         .pipeTo(self)
@@ -74,7 +75,10 @@ object QueryHelper {
       }else{
         ro
       }*/
-    } yield Waypoints.fromRawJson(ro).getOrElse(List.empty)
+    } yield Waypoints.fromRawJson(ro).getOrElse({
+      LoggerFactory.getLogger(getClass).warn(s"Can't comlete query to $url completed with ${resp.status} $ro")
+      List.empty[Waypoint]
+    })
     response
   }
 }
