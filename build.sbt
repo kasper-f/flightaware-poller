@@ -1,8 +1,30 @@
+
 name := "flightaware"
 
 version := "1.0"
 
 scalaVersion := "2.11.8"
+
+enablePlugins(JavaAppPackaging)
+
+mainClass in Compile := Some("dk.kaab.flightaware.Flightaware")
+
+enablePlugins(JavaServerAppPackaging)
+
+enablePlugins(DebianPlugin)
+
+serverLoading in Debian := com.typesafe.sbt.packager.archetypes.ServerLoader.Systemd
+
+requiredStartFacilities in Debian := Some("network.target")
+
+maintainer := "kaab"
+
+debianPackageDependencies in Debian += "openjdk-8-jre"
+
+packageSummary in Debian:= "flightaware poller"
+
+packageDescription in Debian:=
+  """flightaware poller service, will start service and poll flightware for flights in specified areas""".stripMargin
 
 libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.4.14"
 
