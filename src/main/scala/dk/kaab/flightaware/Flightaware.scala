@@ -36,8 +36,11 @@ class FlightawareActor(index:Int, area: AreaConfig) extends Actor with ActorLogg
       log.info(s"result from flightaware, ${air.size} flights in the air")
       store ! air
     case air:List[FlightDetails] =>
+      val flightList = air.map(flight => s"${flight.sample.faFlightID} ${flight.sample.origin} ${flight.sample.destination} ${flight.sample.latitude}:${flight.sample.longitude}").mkString("\n")
+      log.info(s"result from flightaware, ${air.size} flights in the air :\n" + flightList)
       log.info(s"result from flightaware, ${air.size} flights in the air")
       store ! air
+
     case x =>
       log.info(s"result from flightaware ????, ${x.toString}")
   }
