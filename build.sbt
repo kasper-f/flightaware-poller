@@ -28,6 +28,8 @@ packageDescription in Debian:=
 
 libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.4.14"
 
+libraryDependencies += "com.typesafe.akka" %% "akka-testkit" % "2.4.14" % "test"
+
 libraryDependencies += "com.typesafe.akka" %% "akka-http" % "10.0.0"
 
 libraryDependencies += "com.microsoft.sqlserver" % "mssql-jdbc" % "6.1.0.jre8"

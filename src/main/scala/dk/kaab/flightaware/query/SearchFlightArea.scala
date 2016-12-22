@@ -22,21 +22,22 @@ class SearchFlightArea extends Actor with ActorLogging {
 
   final implicit val system : ActorSystem =context.system
   final implicit val materializer: ActorMaterializer = ActorMaterializer(ActorMaterializerSettings(context.system))
-  val searchUrl = FlightConfig.urlSearch
+  val config = new FlightConfig(context.system.settings.config)
+  val searchUrl = config.urlSearch
   val http = Http(context.system)
 
   def receive = {
-    case Query(config) =>
+    case Query(area) =>
         http.singleRequest(HttpRequest(
-        uri = searchUrl.replace("AREA", config.areaUrlEncoded),
-        headers = List(FlightConfig.authorization)))
+        uri = searchUrl.replace("AREA", area.areaUrlEncoded),
+        headers = List(config.authorization)))
         .pipeTo(self)
     case HttpResponse(StatusCodes.OK, headers, entity, _) =>
       val rr = Unmarshal(entity).to[String]
       log.debug("Got response, body: " + rr)
       val withRout : Future[List[FlightDetails]] = for{
         l <- rr.map(SearchResult.fromRawJson)
-        d <- QueryHelper.queryDecodeFlightRoutes(l.get.aircraft.toList)
+        d <- QueryHelper(config).queryDecodeFlightRoutes(l.get.aircraft.toList)
 
       } yield d
 //      rr.map(r => SearchResult.fromRawJson(r)) pipeTo context.parent
@@ -46,37 +47,37 @@ class SearchFlightArea extends Actor with ActorLogging {
     case HttpResponse(code, _, _, _) =>
       log.warning("Request failed, response code: " + code)
       if (code == StatusCodes.Unauthorized) {
-        log.error(s"Stopping poller as we can't authenticate against target with ${FlightConfig.user}")
+        log.error(s"Stopping poller as we can't authenticate against target with ${config.user}")
         context.system.terminate()
       }
 
   }
 }
 
-object QueryHelper {
+case class QueryHelper(config:FlightConfig) {
 
   def queryDecodeFlightRoutes(sa:List[FlightSample])(implicit mat:Materializer, sys: ActorSystem, ece: ExecutionContext): Future[List[FlightDetails]] = {
-//    Future.sequence(sa.map(s => queryDecodeFlightRoute(s.faFlightID).map(w => FlightDetails(s,w))))
-    Future.sequence(sa.map(s => queryDecodeFlightRoute(s"${s.ident}@${s.departureTime}").map(w => FlightDetails(s,w))))
+    Future.sequence(sa.map(s => queryDecodeFlightRoute(s.faFlightID).map(w => FlightDetails(s,w))))
+//    Future.sequence(sa.map(s => queryDecodeFlightRoute(s"${s.ident}@${s.departureTime}").map(w => FlightDetails(s,w))))
   }
   def queryDecodeFlightRoute(id: String)(implicit mat:Materializer, sys: ActorSystem, ece: ExecutionContext): Future[List[Waypoint]] = {
     val http = Http(sys)
-    val url = FlightConfig.urlFlightRoute.replace("FAFLIGHTID", URLEncoder.encode(id,"UTF-8"))
+    val url = config.urlFlightRoute.replace("FAFLIGHTID", URLEncoder.encode(id,"UTF-8"))
     val f = http.singleRequest(HttpRequest(
       uri = url,
-      headers = List(FlightConfig.authorization)
+      headers = List(config.authorization)
     ))
     val response = for {
       resp <- f
       ro <- Unmarshal(resp.entity).to[String]
       /*ro <- if(resp.status != StatusCodes.OK) {
-        LoggerFactory.getLogger(getClass).warn(s"Can't comlete query to $url completed with ${resp.status} $ro")
+        LoggerFactory.getLogger(getClass).warn(s"Can't complete query to $url completed with ${resp.status} $ro")
         ro
       }else{
         ro
       }*/
     } yield Waypoints.fromRawJson(ro).getOrElse({
-      LoggerFactory.getLogger(getClass).warn(s"Can't comlete query to $url completed with ${resp.status} $ro")
+      LoggerFactory.getLogger(getClass).warn(s"Can't complete query to $url completed with ${resp.status} $ro")
       List.empty[Waypoint]
     })
     response
