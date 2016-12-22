@@ -8,9 +8,11 @@ import com.typesafe.config.{Config, ConfigFactory}
 import scala.collection.JavaConversions._
 import scala.collection.mutable
 
-object FlightConfig {
-  private val conf = ConfigFactory.load()
-  private val flightConf = conf.getConfig("flightaware")
+object FlightConfig extends FlightConfig(ConfigFactory.load()){
+
+}
+class FlightConfig(config: Config) {
+  private val flightConf = config.getConfig("flightaware")
   val user: String = flightConf.getString("user")
   val apikey: String = flightConf.getString("apikey")
 
