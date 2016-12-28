@@ -33,7 +33,7 @@ class FlightawareActor(index:Int, area: AreaConfig) extends Actor with ActorLogg
 
   override def receive: Receive = {
     case air:List[FlightDetails] =>
-      val flightList = air.map(flight => s"${flight.sample.faFlightID} ${flight.sample.origin} ${flight.sample.destination} ${flight.sample.latitude}:${flight.sample.longitude}").mkString("\n")
+      val flightList = air.map(flight => s"${flight.sample.ident} ${flight.sample.faFlightID} ${flight.sample.origin} ${flight.sample.destination} ${flight.sample.latitude}:${flight.sample.longitude}").mkString("\n")
       log.info(s"result from flightaware, ${air.size} flights in the air :\n" + flightList)
       log.info(s"result from flightaware, ${air.size} flights in the air")
       store ! air
