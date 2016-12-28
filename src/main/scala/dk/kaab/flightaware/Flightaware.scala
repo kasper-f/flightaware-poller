@@ -1,8 +1,8 @@
 package dk.kaab.flightaware
 
 import akka.actor.{Actor, ActorLogging, ActorSystem, Props}
-import dk.kaab.flightaware.datatypes.{FlightDetails, SearchResult}
-import dk.kaab.flightaware.query.{SearchFlightArea, Query}
+import dk.kaab.flightaware.datatypes.{FlightDetails, FlightResults, SearchResult}
+import dk.kaab.flightaware.query.{Query, SearchFlightArea}
 
 import scala.concurrent.duration._
 
@@ -32,11 +32,11 @@ class FlightawareActor(index:Int, area: AreaConfig) extends Actor with ActorLogg
   context.system.scheduler.schedule(index.seconds, 30.seconds, queryActor, Query(area))
 
   override def receive: Receive = {
-    case air:List[FlightDetails] =>
+    case r@FlightResults(air) =>
       val flightList = air.map(flight => s"${flight.sample.ident} ${flight.sample.faFlightID} ${flight.sample.origin} ${flight.sample.destination} ${flight.sample.latitude}:${flight.sample.longitude}").mkString("\n")
       log.info(s"result from flightaware, ${air.size} flights in the air :\n" + flightList)
       log.info(s"result from flightaware, ${air.size} flights in the air")
-      store ! air
+      store ! r
 
     case x =>
       log.warning(s"unexpected message to FlightawareActor ????, ${x.toString}")

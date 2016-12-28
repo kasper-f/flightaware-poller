@@ -2,7 +2,8 @@ package dk.kaab.flightaware
 
 import akka.actor.{Actor, ActorLogging, ActorSystem}
 import com.typesafe.config.ConfigFactory
-import dk.kaab.flightaware.datatypes.FlightDetails
+import dk.kaab.flightaware.datatypes.{FlightDetails, FlightResults}
+import scalikejdbc.config.DBs
 //import akka.stream.{ActorMaterializer, ActorMaterializerSettings}
 import dk.kaab.flightaware.datatypes.FlightSample
 //import dk.kaab.flightaware.{AreaConfig, FlightConfig, mySQLConfig}
@@ -11,13 +12,15 @@ import scalikejdbc._
 
 object SqlStore{
 
-  implicit class FlightSampleJdbc(s:FlightSample){
+  implicit class FlightSampleJdbc(d:FlightDetails){
 
     //todo Trying to get access to my mySQL val's but isnt working
     //val config = ConfigFactory.load().getString("flightaware.db.default.driver")
     //println(s"My secret value is $config")
 
     def insert():Unit={
+      val s = d.sample
+
       // initialize JDBC driver & connection pool
       Class.forName("org.h2.Driver")
       //Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver")
@@ -35,11 +38,24 @@ object SqlStore{
 }
 class SqlStore extends Actor with ActorLogging{
   import SqlStore._
+  @scala.throws[Exception](classOf[Exception])
+  override def preStart(): Unit = {
+    super.preStart()
+    scalikejdbc.config.DBs.setupAll()
+  }
+
+  @scala.throws[Exception](classOf[Exception])
+  override def postStop(): Unit = {
+    super.postStop()
+    DBs.closeAll()
+  }
+
   override def receive: Receive = {
-    case f:Seq[FlightSample] =>
+    case f:FlightResults =>
 //      log.warning("Should store message in DB")
       //todo store in sql db
-      f.foreach(_.insert())
+      f.planes.foreach(_.insert())
+
 
 
   }

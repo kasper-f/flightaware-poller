@@ -52,3 +52,4 @@ object SearchResult{
 case class SearchResult(next_offset:Int, aircraft:Seq[FlightSample])
 
 case class FlightDetails(sample:FlightSample, waypoint:List[Waypoint])
+case class FlightResults(planes: Seq[FlightDetails])
