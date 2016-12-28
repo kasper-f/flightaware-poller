@@ -14,9 +14,8 @@ object SqlStore{
 
   implicit class FlightSampleJdbc(d:FlightDetails){
 
-    //todo Trying to get access to my mySQL val's but isnt working
+    //Getting mySQL connection details from application.conf
     val config = ConfigFactory.load() //.getString("flightaware.db.default.driver")
-    //println(s"My secret value is " + config.getString("db.default.url"))
     val sqlDriver = config.getString("db.default.driver")
     val sqlUrl = config.getString("db.default.url")
     val sqlUser = config.getString("db.default.user")
