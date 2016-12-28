@@ -44,7 +44,8 @@ class SqlStore extends Actor with ActorLogging {
       DB localTx { implicit session =>
         f.planes.foreach(_.insert())
       }
-    //log.info(s"Stored ${f.planes.size} samples in sql")
+      log.info(s"Stored ${f.planes.size} samples in sql")
+
 
   }
 }
