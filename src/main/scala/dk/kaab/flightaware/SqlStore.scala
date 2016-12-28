@@ -11,12 +11,9 @@ object SqlStore{
   implicit class FlightSampleJdbc(d:FlightDetails){
 
 
-    def insert():Unit={
+    def insert()(implicit execution: DBSession):Unit={
       val s = d.sample
-
-      DB localTx { implicit session =>
         sql"insert into flightsampler_search (faFlightID, ident, prefix, type, suffix, origin, destination, timeout, timestamp, departureTime, firstPositionTime, arrivalTime, longitude, latitude, lowLongitude, lowLatitude, highLongitude, highLatitude, groundspeed, altitude, heading, altitudeStatus, updateType, altitudeChange, waypoints) values (${s.faFlightID}, ${s.ident}, ${s.prefix}, ${s.`type`}, ${s.suffix}, ${s.origin}, ${s.destination}, ${s.timeout}, ${s.timestamp}, ${s.departureTime}, ${s.firstPositionTime}, ${s.arrivalTime}, ${s.longitude}, ${s.latitude}, ${s.lowLongitude}, ${s.lowLatitude}, ${s.highLongitude}, ${s.highLatitude}, ${s.groundspeed}, ${s.altitude}, ${s.heading}, ${s.altitudeStatus}, ${s.updateType}, ${s.altitudeChange}, ${s.waypoints})".update.apply()
-      }
     }
   }
 
@@ -40,7 +37,9 @@ class SqlStore extends Actor with ActorLogging{
     case f:FlightResults =>
 //      log.warning("Should store message in DB")
       //todo store in sql db
-      f.planes.foreach(_.insert())
+      DB localTx { implicit session =>
+        f.planes.foreach(_.insert())
+      }
 
 
 
