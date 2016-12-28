@@ -15,8 +15,14 @@ object SqlStore{
   implicit class FlightSampleJdbc(d:FlightDetails){
 
     //todo Trying to get access to my mySQL val's but isnt working
-    //val config = ConfigFactory.load().getString("flightaware.db.default.driver")
-    //println(s"My secret value is $config")
+    val config = ConfigFactory.load() //.getString("flightaware.db.default.driver")
+    //println(s"My secret value is " + config.getString("db.default.url"))
+    val sqlDriver = config.getString("db.default.driver")
+    val sqlUrl = config.getString("db.default.url")
+    val sqlUser = config.getString("db.default.user")
+    val sqlPass = config.getString("db.default.password")
+
+    //println("Dette er min config " + sqlDriver + sqlUser + sqlPass)
 
     def insert():Unit={
       val s = d.sample
@@ -24,9 +30,10 @@ object SqlStore{
       // initialize JDBC driver & connection pool
       //Class.forName("org.h2.Driver")
       //Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver")
-      Class.forName("db.default.driver")
+
+      Class.forName(sqlDriver)
       //ConnectionPool.singleton("jdbc:h2:mem:", "mySQLuser", "pass")
-      ConnectionPool.singleton("db.default.url", "db.default.user", "db.default.password")
+      ConnectionPool.singleton(sqlUrl, sqlUser, sqlPass)
 
       // ad-hoc session provider on the REPL
       implicit val session = AutoSession
@@ -41,6 +48,7 @@ class SqlStore extends Actor with ActorLogging{
   @scala.throws[Exception](classOf[Exception])
   override def preStart(): Unit = {
     super.preStart()
+
     scalikejdbc.config.DBs.setupAll()
   }
 
