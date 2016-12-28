@@ -15,7 +15,7 @@ object SqlStore{
   implicit class FlightSampleJdbc(d:FlightDetails){
 
     //Getting mySQL connection details from application.conf
-    val config = ConfigFactory.load() //.getString("flightaware.db.default.driver")
+    val config = ConfigFactory.load()
     val sqlDriver = config.getString("db.default.driver")
     val sqlUrl = config.getString("db.default.url")
     val sqlUser = config.getString("db.default.user")
