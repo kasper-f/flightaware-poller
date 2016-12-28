@@ -44,7 +44,7 @@ libraryDependencies ++= Seq(
 )
 
 // needed by scalikejdbc
-libraryDependencies += "commons-pool" % "commons-pool" % "1.6"
+libraryDependencies += "commons-pool" % "commons-pool" % "1.5.+"
 
 // https://mvnrepository.com/artifact/commons-dbcp/commons-dbcp
 libraryDependencies += "commons-dbcp" % "commons-dbcp" % "1.4"

@@ -37,7 +37,6 @@ class FlightawareActor(index:Int, area: AreaConfig) extends Actor with ActorLogg
       log.info(s"result from flightaware, ${air.size} flights in the air :\n" + flightList)
       log.info(s"result from flightaware, ${air.size} flights in the air")
       store ! r
-
     case x =>
       log.warning(s"unexpected message to FlightawareActor ????, ${x.toString}")
   }

@@ -22,7 +22,7 @@ object SqlStore{
       val s = d.sample
 
       // initialize JDBC driver & connection pool
-      Class.forName("org.h2.Driver")
+      //Class.forName("org.h2.Driver")
       //Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver")
       Class.forName("db.default.driver")
       //ConnectionPool.singleton("jdbc:h2:mem:", "mySQLuser", "pass")
