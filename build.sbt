@@ -34,6 +34,8 @@ libraryDependencies += "com.typesafe.akka" %% "akka-http" % "10.0.0"
 
 libraryDependencies += "com.microsoft.sqlserver" % "mssql-jdbc" % "6.1.0.jre8"
 
+libraryDependencies += "mysql" % "mysql-connector-java" % "5.1.+"
+
 libraryDependencies ++= Seq(
   "org.scalikejdbc" %% "scalikejdbc"        % "2.5.+",
   "com.h2database"  %  "h2"                 % "1.4.+",
