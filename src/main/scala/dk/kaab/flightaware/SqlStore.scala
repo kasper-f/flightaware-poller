@@ -1,12 +1,8 @@
 package dk.kaab.flightaware
 
 import akka.actor.{Actor, ActorLogging, ActorSystem}
-import com.typesafe.config.ConfigFactory
 import dk.kaab.flightaware.datatypes.{FlightDetails, FlightResults}
 import scalikejdbc.config.DBs
-//import akka.stream.{ActorMaterializer, ActorMaterializerSettings}
-import dk.kaab.flightaware.datatypes.FlightSample
-//import dk.kaab.flightaware.{AreaConfig, FlightConfig, mySQLConfig}
 import scalikejdbc._
 
 
