@@ -44,20 +44,22 @@ class SearchFlightArea extends Actor with ActorLogging {
       withRout.map(FlightResults) pipeTo context.parent
 
 
-    case HttpResponse(code, _, _, _) =>
+      case HttpResponse(code, _, _, _) =>
       log.warning("Request failed, response code: " + code)
       if (code == StatusCodes.Unauthorized) {
         log.error(s"Stopping poller as we can't authenticate against target with ${config.user}")
         context.system.terminate()
       }
 
-  }
+
+    }
 }
 
 case class QueryHelper(config:FlightConfig) {
 
   def queryDecodeFlightRoutes(sa:List[FlightSample])(implicit mat:Materializer, sys: ActorSystem, ece: ExecutionContext): Future[List[FlightDetails]] = {
-    Future.sequence(sa.map(s => queryDecodeFlightRoute(s.faFlightID).map(w => FlightDetails(s,w))))
+    Future(sa.map(s => FlightDetails(s,List.empty)))
+    //Future.sequence(sa.map(s => queryDecodeFlightRoute(s.faFlightID).map(w => FlightDetails(s,w))))
 //    Future.sequence(sa.map(s => queryDecodeFlightRoute(s"${s.ident}@${s.departureTime}").map(w => FlightDetails(s,w))))
   }
   def queryDecodeFlightRoute(id: String)(implicit mat:Materializer, sys: ActorSystem, ece: ExecutionContext): Future[List[Waypoint]] = {
