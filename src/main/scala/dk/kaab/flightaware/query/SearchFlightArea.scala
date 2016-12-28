@@ -41,7 +41,7 @@ class SearchFlightArea extends Actor with ActorLogging {
 
       } yield d
 //      rr.map(r => SearchResult.fromRawJson(r)) pipeTo context.parent
-      withRout pipeTo context.parent
+      withRout.map(FlightResults) pipeTo context.parent
 
 
     case HttpResponse(code, _, _, _) =>

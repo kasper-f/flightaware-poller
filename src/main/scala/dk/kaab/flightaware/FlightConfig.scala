@@ -30,9 +30,3 @@ case class AreaConfig(conf:Config){
   val area = s"$min $max"
   val areaUrlEncoded: String = URLEncoder.encode(area,"UTF-8")
 }
-
-case class mySQLConfig(conf:Config){
-  val mySqlUser: String = conf.getString("db.default.user")
-  val mySqlPass: String = conf.getString("db.default.password")
-  val mySqlDb: String = conf.getString("db.default.db")
-}
